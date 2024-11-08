@@ -1,6 +1,16 @@
-function organizeData(extractDir, rootDir, subjectsDir, metadataDir, docsDir)
-    % Move subject-info.csv to rootDir
-    movefile(fullfile(extractDir, 'subject-info.csv'), rootDir);
+function organizeData(extractDir, rootDir, subjectsDir, metadataDir, docsDir, logFile, hWaitbar, stepNum, totalSteps)
+    % Organize extracted data with logging and progress indication
+    
+    waitbar(stepNum / totalSteps, hWaitbar, 'Organizing data...');
+    
+    % Move subject-info.csv if it exists
+    csvFilePath = fullfile(extractDir, 'subject-info.csv');
+    if exist(csvFilePath, 'file')
+        movefile(csvFilePath, rootDir);
+        logMessage(logFile, sprintf('Moved %s to %s', 'subject-info.csv', rootDir));
+    else
+        logMessage(logFile, sprintf('File %s not found in %s. Skipping move.', 'subject-info.csv', extractDir));
+    end
 
     % Organize subject files
     for subjNum = 0:35
@@ -13,15 +23,23 @@ function organizeData(extractDir, rootDir, subjectsDir, metadataDir, docsDir)
             srcFile = fullfile(extractDir, fileName);
             if exist(srcFile, 'file')
                 movefile(srcFile, subjDir);
-                fprintf('Moved %s to %s\n', fileName, subjDir);
+                logMessage(logFile, sprintf('Moved %s to %s', fileName, subjDir));
             else
-                fprintf('Warning: %s not found.\n', fileName);
+                logMessage(logFile, sprintf('Warning: %s not found.', fileName));
             end
         end
     end
 
     % Move metadata files
-    movefile(fullfile(extractDir, 'README.txt'), docsDir);
-    movefile(fullfile(extractDir, 'RECORDS'), metadataDir);
-    movefile(fullfile(extractDir, 'SHA256SUMS.txt'), metadataDir);
+    metadataFiles = {'README.txt', 'RECORDS', 'SHA256SUMS.txt'};
+    for i = 1:length(metadataFiles)
+        srcFile = fullfile(extractDir, metadataFiles{i});
+        if exist(srcFile, 'file')
+            movefile(srcFile, metadataDir);
+            logMessage(logFile, sprintf('Moved %s to %s', metadataFiles{i}, metadataDir));
+        else
+            logMessage(logFile, sprintf('File %s not found. Skipping move.', metadataFiles{i}));
+        end
+    end
+    waitbar((stepNum + 1) / totalSteps, hWaitbar, 'Data organization complete.');
 end
