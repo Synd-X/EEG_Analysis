@@ -1,0 +1,33 @@
+# MATLAB temporary files
+*.asv
+*.m~
+*.autosave
+
+# MATLAB binary files
+*.mat
+*.fig
+*.p
+
+# MATLAB app and toolbox files
+*.mlappinstall
+*.mltbx
+
+# MATLAB code generation folders
+codegen/
+slprj/
+sccprj/
+
+# Simulink cache files
+*.slxc
+
+# MATLAB preferences directory
+.matlab/
+
+# Backup and metadata directories
+data/backup/
+data/metadata/
+docs/
+
+# Operating system files
+.DS_Store
+Thumbs.db
