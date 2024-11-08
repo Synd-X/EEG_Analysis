@@ -5,7 +5,11 @@ function setupDirectories(rootDir, backupDir, subjectsDir, metadataDir, docsDir,
         if ~exist(dirs{i}, 'dir')
             mkdir(dirs{i});
             logMessage(logFile, sprintf('Created directory: %s', dirs{i}));
+        else
+            logMessage(logFile, sprintf('Directory already exists: %s', dirs{i}));
         end
     end
-    waitbar(stepNum / totalSteps, hWaitbar, 'Setting up directories...');
+    if nargin > 6 && ishandle(hWaitbar)  % Check if hWaitbar is provided and valid
+        waitbar(stepNum / totalSteps, hWaitbar, 'Setting up directories...');
+    end
 end
